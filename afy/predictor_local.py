@@ -1,4 +1,5 @@
 from scipy.spatial import ConvexHull
+from pathlib import Path
 import torch
 import yaml
 from modules.keypoint_detector import KPDetector
@@ -6,6 +7,7 @@ from modules.generator_optim import OcclusionAwareGenerator
 from sync_batchnorm import DataParallelWithCallback
 import numpy as np
 import face_alignment
+from afy.utils import log
 
 
 def normalize_kp(kp_source, kp_driving, kp_driving_initial, adapt_movement_scale=False,
@@ -49,10 +51,47 @@ class PredictorLocal:
         landmarks_2d = getattr(face_alignment.LandmarksType, "_2D", None)
         if landmarks_2d is None:
             landmarks_2d = face_alignment.LandmarksType.TWO_D
-        self.fa = face_alignment.FaceAlignment(landmarks_2d, flip_input=True, device=self.device)
+        self.fa = self._init_face_alignment_with_recovery(landmarks_2d)
         self.source = None
         self.kp_source = None
         self.enc_downscale = enc_downscale
+
+    def _init_face_alignment_with_recovery(self, landmarks_2d):
+        try:
+            return face_alignment.FaceAlignment(landmarks_2d, flip_input=True, device=self.device)
+        except RuntimeError as err:
+            err_str = str(err).lower()
+            is_corrupted_cache = (
+                'pytorchstreamreader failed reading zip archive' in err_str
+                or 'failed finding central directory' in err_str
+            )
+            if not is_corrupted_cache:
+                raise
+
+            log("FaceAlignment model cache appears corrupted. Cleaning cached checkpoints and retrying...")
+            self._clear_face_alignment_checkpoints_cache()
+            return face_alignment.FaceAlignment(landmarks_2d, flip_input=True, device=self.device)
+
+    @staticmethod
+    def _clear_face_alignment_checkpoints_cache():
+        try:
+            checkpoints_dir = Path(torch.hub.get_dir()) / 'checkpoints'
+        except Exception:
+            return
+
+        if not checkpoints_dir.exists():
+            return
+
+        markers = ('fan', 'face-alignment', 'face_alignment', 'depth')
+        for path in checkpoints_dir.iterdir():
+            if not path.is_file():
+                continue
+            name = path.name.lower()
+            if any(marker in name for marker in markers):
+                try:
+                    path.unlink()
+                except OSError:
+                    pass
 
     def load_checkpoints(self):
         with open(self.config_path) as f:

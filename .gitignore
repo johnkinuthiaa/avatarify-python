@@ -3,3 +3,5 @@ vox-adv-cpk.pth.tar
 __pycache__
 
 *.log
+!var/log/.gitkeep
+/v4l2loopback

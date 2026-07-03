@@ -16,6 +16,15 @@ import afy.camera_selector as cam_selector
 
 log = Tee('./var/log/cam_fomm.log')
 
+# Module-level globals used across functions and the __main__ block.
+# Initialised here so functions like is_new_frame_better() and
+# draw_face_landmarks() can safely reference them before the first
+# change_avatar() call.
+avatar = None
+avatar_kp = None
+kp_source = None
+display_string = ""
+
 # Where to split an array from face_alignment to separate each landmark
 LANDMARK_SLICE_ARRAY = np.array([17, 22, 27, 31, 36, 42, 48, 60])
 
@@ -55,7 +64,7 @@ def is_new_frame_better(source, driving, predictor):
         return False
 
 
-def load_stylegan_avatar():
+def load_stylegan_avatar(IMG_SIZE=256):
     url = "https://thispersondoesnotexist.com/image"
     r = requests.get(url, headers={'User-Agent': "My User Agent 1.0"}).content
 
@@ -184,8 +193,7 @@ if __name__ == "__main__":
     with open('config.yaml', 'r') as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
 
-    global display_string
-    display_string = ""
+    # display_string, avatar, avatar_kp, kp_source are module-level globals.
 
     IMG_SIZE = 256
 
@@ -227,6 +235,11 @@ if __name__ == "__main__":
     cap.start()
 
     avatars, avatar_names = load_images()
+
+    if not avatars:
+        log("No avatar images found in '{}'. Add .jpg/.jpeg/.png files and restart.".format(opt.avatars))
+        cap.stop()
+        exit(1)
 
     enable_vcam = not opt.no_stream
 
@@ -393,7 +406,7 @@ if __name__ == "__main__":
             elif key == ord('q'):
                 try:
                     log('Loading StyleGAN avatar...')
-                    avatar = load_stylegan_avatar()
+                    avatar = load_stylegan_avatar(IMG_SIZE)
                     passthrough = False
                     change_avatar(predictor, avatar)
                 except:

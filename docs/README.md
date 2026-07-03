@@ -113,6 +113,7 @@ scripts\install_windows.bat
 6. Run `run_windows.bat`.
 
 `scripts\install_windows.bat` is safe to re-run after a failed install: it recreates a clean `avatarify` env when the existing one is broken or uses the wrong Python version, then force-reinstalls dependency sets (`conda` + `pip`) and `vs2015_runtime`. `run_windows.bat` checks and reinstalls missing Python packages (`cv2`, `yaml`, `zmq`, `msgpack_numpy`, `face_alignment`) and switches to CPU-only PyTorch when GPU DLL loading fails. If there are multiple cameras in the system, open `config.yaml` and increase `query_n_cams` to scan more camera indexes.
+
 7. Install [OBS Studio](https://obsproject.com/) for capturing Avatarify output.
 8. Install [VirtualCam plugin](https://obsproject.com/forum/resources/obs-virtualcam.539/). Choose `Install and register only 1 virtual camera`.
 9. Run OBS Studio.

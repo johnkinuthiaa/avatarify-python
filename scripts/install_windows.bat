@@ -31,7 +31,8 @@ if "%RECREATE_ENV%"=="1" (
 
 call "%CONDA_BASE%\condabin\conda.bat" activate %CONDA_ENV_NAME% || exit /B 1
 
-call conda install -y --force-reinstall numpy==1.19.0 scikit-image python-blosc==1.7.0 -c conda-forge || exit /B 1
+REM scikit-image 0.19+ dropped Python 3.7 support; pin to the last compatible release.
+call conda install -y --force-reinstall numpy==1.19.0 "scikit-image==0.18.3" python-blosc==1.7.0 -c conda-forge || exit /B 1
 call conda install -y --force-reinstall pytorch==1.7.1 torchvision==0.8.2 cudatoolkit=11.0 -c pytorch || exit /B 1
 call conda install -y --force-reinstall vs2015_runtime || exit /B 1
 call conda install -y -c anaconda git || exit /B 1

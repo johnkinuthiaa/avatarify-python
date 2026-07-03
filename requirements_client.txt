@@ -1,7 +1,7 @@
 numpy>=1.19,<2
 PyYAML>=5.4,<7
-requests>=2.28,<2.32
-urllib3<2
-msgpack-numpy>=0.4.7,<0.5
-pyzmq>=20,<26
-opencv-python>=4.5.5,<4.9
+requests>=2.28,<2.35
+urllib3>=1.26,<3
+msgpack-numpy>=0.4.7,<=0.4.8
+pyzmq>=20,<28
+opencv-python>=4.5.5,<5
