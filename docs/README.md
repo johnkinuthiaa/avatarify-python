@@ -1,4 +1,4 @@
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/alievk/avatarify/blob/master/avatarify.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/johnkinuthiaa/avatarify-python/blob/master/avatarify.ipynb)
 
 :arrow_forward: [Demo](https://youtu.be/Q7LFDT-FRzs)
 
@@ -40,7 +40,7 @@ To run Avatarify *locally* you need a CUDA-enabled (NVIDIA) video card. Otherwis
 - GeForce GTX 1070: **15 frames per second**
 - GeForce GTX 950: **9 frames per second**
 
-You can also run Avatarify *remotely* on [Google Colab](https://colab.research.google.com/github/alievk/avatarify/blob/master/avatarify.ipynb) (easy) or on a [dedicated server](https://github.com/alievk/avatarify-python/wiki/Remote-GPU) with a GPU (harder). There are no special PC requirements for this mode, only a stable internet connection.
+You can also run Avatarify *remotely* on [Google Colab](https://colab.research.google.com/github/johnkinuthiaa/avatarify-python/blob/master/avatarify.ipynb) (easy) or on a [dedicated server](https://github.com/johnkinuthiaa/avatarify-python/wiki/Remote-GPU) with a GPU (harder). There are no special PC requirements for this mode, only a stable internet connection.
 
 Of course, you also need a webcam!
 
@@ -62,7 +62,7 @@ bash Miniconda3-latest-Linux-x86_64.sh
 ```
 2. Clone `avatarify` and install its dependencies (sudo privelege is required):
 ```bash
-git clone https://github.com/alievk/avatarify-python.git
+git clone https://github.com/johnkinuthiaa/avatarify-python.git
 cd avatarify-python
 bash scripts/install.sh
 ```
@@ -78,14 +78,14 @@ bash scripts/install.sh
 codesign --remove-signature /Applications/zoom.us.app
 ```
 -->
-<!--*(!) Note*: To run Avatarify on Mac a [remote GPU](https://github.com/alievk/avatarify-python/wiki/Remote-GPU) connection is required.-->
+<!--*(!) Note*: To run Avatarify on Mac a [remote GPU](https://github.com/johnkinuthiaa/avatarify-python/wiki/Remote-GPU) connection is required.-->
 
 We will use [CamTwist](http://camtwiststudio.com) to create virtual camera for Mac.
 
 1. Install [Miniconda Python 3.7](https://docs.conda.io/en/latest/miniconda.html#macosx-installers) or use *Homebrew Cask*: `brew install --cask miniconda`.
-2. [Download](https://github.com/alievk/avatarify-python/archive/master.zip) and unpack the repository or use `git`:
+2. [Download](https://github.com/johnkinuthiaa/avatarify-python/archive/master.zip) and unpack the repository or use `git`:
 ```bash
-git clone https://github.com/alievk/avatarify-python.git
+git clone https://github.com/johnkinuthiaa/avatarify-python.git
 cd avatarify-python
 bash scripts/install_mac.sh
 ```
@@ -100,17 +100,19 @@ bash scripts/install_mac.sh
 This guide is tested for Windows 10.
 
 <!--- 1. Install [CUDA](https://developer.nvidia.com/cuda-downloads?target_os=Windows&target_arch=x86_64&target_version=10&target_type=exenetwork). -->
-1. Install [Miniconda Python 3.8](https://docs.conda.io/en/latest/miniconda.html#windows-installers).
+1. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html#windows-installers).
 2. Install [Git](https://git-scm.com/download/win).
 3. Press Windows button and type "miniconda". Run suggested Anaconda Prompt.
-4. Download and install Avatarify (please copy-paste these commands and don't change them):
+4. Download and install Avatarify:
 ```bash
-git clone https://github.com/alievk/avatarify-python.git
+git clone https://github.com/johnkinuthiaa/avatarify-python.git
 cd avatarify-python
 scripts\install_windows.bat
 ```
 5. [Download network weights](#download-network-weights) and place `vox-adv-cpk.pth.tar` file in the `avatarify-python` directory (don't unpack it).
-6. Run `run_windows.bat`. If installation was successful, two windows "cam" and "avatarify" will appear. Leave these windows open for the next installation steps. <!--If there are multiple cameras (including virtual ones) in the system, you may need to select the correct one. Open `scripts/settings_windows.bat` and edit `CAMID` variable. `CAMID` is an index number of camera like 0, 1, 2, ...-->
+6. Run `run_windows.bat`.
+
+`scripts\install_windows.bat` is safe to re-run: it reuses an existing `avatarify` Conda env, installs required runtime deps, and installs `vs2015_runtime`. `run_windows.bat` checks and installs missing Python packages (`cv2`, `yaml`, `zmq`, `msgpack_numpy`, `face_alignment`) and falls back to CPU-only PyTorch when GPU DLL loading fails. If there are multiple cameras in the system, open `config.yaml` and increase `query_n_cams` to scan more camera indexes.
 7. Install [OBS Studio](https://obsproject.com/) for capturing Avatarify output.
 8. Install [VirtualCam plugin](https://obsproject.com/forum/resources/obs-virtualcam.539/). Choose `Install and register only 1 virtual camera`.
 9. Run OBS Studio.
@@ -122,7 +124,7 @@ The steps 10-11 are required only once during setup.
 
 #### Remote GPU
 
-You can offload the heavy work to [Google Colab](https://colab.research.google.com/github/alievk/avatarify/blob/master/avatarify.ipynb) or a [server with a GPU](https://github.com/alievk/avatarify-python/wiki/Remote-GPU) and use your laptop just to communicate the video stream. The server and client software are native and dockerized available.
+You can offload the heavy work to [Google Colab](https://colab.research.google.com/github/johnkinuthiaa/avatarify-python/blob/master/avatarify.ipynb) or a [server with a GPU](https://github.com/johnkinuthiaa/avatarify-python/wiki/Remote-GPU) and use your laptop just to communicate the video stream. The server and client software are native and dockerized available.
 
 ### Docker
 Docker images are only availabe on Linux.
@@ -131,7 +133,7 @@ Docker images are only availabe on Linux.
 2. For using the gpu (hardly recommended): Install nvidia drivers and [nvidia docker](https://github.com/NVIDIA/nvidia-docker#quickstart).
 3. Clone `avatarify-python` and install its dependencies (v4l2loopback kernel module):
 ```bash
-git clone https://github.com/alievk/avatarify-python.git
+git clone https://github.com/johnkinuthiaa/avatarify-python.git
 cd avatarify-python
 bash scripts/install_docker.sh
 ```
@@ -168,7 +170,7 @@ If you haven't installed a GPU add the `--no-gpus` flag. In order to use Docker 
 `cam` and `avatarify` windows will pop-up. The `cam` window is for controlling your face position and `avatarify` is for the avatar animation preview. Please follow these [recommendations](#driving-your-avatar) to drive your avatars.
 
 #### Mac
-*Note*: On Mac Avatarify runs only with [Google Colab](https://colab.research.google.com/github/alievk/avatarify/blob/master/avatarify.ipynb) or a [dedicated server](https://github.com/alievk/avatarify-python/wiki/Remote-GPU) with GPU.
+*Note*: On Mac Avatarify runs only with [Google Colab](https://colab.research.google.com/github/johnkinuthiaa/avatarify-python/blob/master/avatarify.ipynb) or a [dedicated server](https://github.com/johnkinuthiaa/avatarify-python/wiki/Remote-GPU) with GPU.
 
 Please find where you downloaded `avatarify` and substitute path `/path/to/avatarify` below.
 
@@ -177,7 +179,7 @@ Please find where you downloaded `avatarify` and substitute path `/path/to/avata
 cd /path/to/avatarify
 bash run_mac.sh --worker-host gpu_server_address
 ```-->
-1. To run Avatarify please follow instructions for [Google Colab](https://colab.research.google.com/github/alievk/avatarify/blob/master/avatarify.ipynb) or a [dedicated server](https://github.com/alievk/avatarify-python/wiki/Remote-GPU).
+1. To run Avatarify please follow instructions for [Google Colab](https://colab.research.google.com/github/johnkinuthiaa/avatarify-python/blob/master/avatarify.ipynb) or a [dedicated server](https://github.com/johnkinuthiaa/avatarify-python/wiki/Remote-GPU).
 2. Go to [CamTwist](http://camtwiststudio.com).
 3. Choose `Desktop+` and press `Select`.
 4. In the `Settings` section choose `Confine to Application Window` and select `python (avatarify)` from the drop-down menu.
@@ -195,7 +197,8 @@ If there are multiple cameras (including virtual ones) in your system, you may n
 cd C:\path\to\avatarify
 run_windows.bat
 ```
-2. Run OBS Studio. It should automaitcally start streaming video from Avatarify to `OBS-Camera`.
+2. If you see import or DLL errors on first run, re-run `scripts\install_windows.bat` and then `run_windows.bat`.
+3. Run OBS Studio. It should automaitcally start streaming video from Avatarify to `OBS-Camera`.
 
 `cam` and `avatarify` windows will pop-up. The `cam` window is for controlling your face position and `avatarify` is for the avatar animation preview. Please follow these [recommendations](#driving-your-avatar) to drive your avatars.
 
@@ -266,7 +269,7 @@ Make a call, allow browser using cameras, click on Settings icon, choose `avatar
 
 
 ## Uninstall
-To remove Avatarify and its related programs follow the [instructions](https://github.com/alievk/avatarify-python/wiki/Removing-Avatarify) in the Wiki.
+To remove Avatarify and its related programs follow the [instructions](https://github.com/johnkinuthiaa/avatarify-python/wiki/Removing-Avatarify) in the Wiki.
 
 
 ## Contribution
@@ -295,16 +298,16 @@ Q: **I have an ATI GPU (e.g. Radeon). Why does it work so slow?**
 A: To run the neural network Avatarify uses PyTorch library, which is optimized for CUDA. If PyTorch can’t find a CUDA-enabled GPU in your system it will fallback to CPU. The performance on the CPU will be much worse.
 
 Q: **How to add a new avatar?**  
-A: It’s easy. All you need is to find a picture of your avatar and put it in the `avatars` folder. [More](https://github.com/alievk/avatarify-python#setup-avatars).
+A: It’s easy. All you need is to find a picture of your avatar and put it in the `avatars` folder. [More](https://github.com/johnkinuthiaa/avatarify-python#setup-avatars).
 
 Q: **My avatar looks distorted.**  
-A: You need to calibrate your face position. Please follow the [tips](https://github.com/alievk/avatarify-python#driving-your-avatar) or watch the video [tutorial](https://youtu.be/lym9ANVb120?t=662).
+A: You need to calibrate your face position. Please follow the [tips](https://github.com/johnkinuthiaa/avatarify-python#driving-your-avatar) or watch the video [tutorial](https://youtu.be/lym9ANVb120?t=662).
 
 Q: **Can I use a cloud GPU?**  
-A: This is work in progress. See the relevant [discussion](https://github.com/alievk/avatarify-python/issues/115).
+A: This is work in progress. See the relevant [discussion](https://github.com/johnkinuthiaa/avatarify-python/issues/115).
 
 Q: **Avatarify crashed, what to do?**  
-A: First, try to find your error in the [troubleshooting](https://github.com/alievk/avatarify-python#troubleshooting) section. If it is not there, try to find it in the [issues](https://github.com/alievk/avatarify-python/issues). If you couldn’t find your issue there, please open a new one using the issue template.
+A: First, try to find your error in the [troubleshooting](https://github.com/johnkinuthiaa/avatarify-python#troubleshooting) section. If it is not there, try to find it in the [issues](https://github.com/johnkinuthiaa/avatarify-python/issues). If you couldn’t find your issue there, please open a new one using the issue template.
 
 Q: **Can I use Avatarify for commercial purposes?**  
 A: No. Avatarify and First Order Motion Model are licensed under Creative Commons Non-Commercial license, which prohibits commercial use.
@@ -318,5 +321,4 @@ A: We have Slack. Please join: [<img src="https://img.shields.io/badge/slack-joi
 
 ## Troubleshooting
 
-Please follow the [Wiki](https://github.com/alievk/avatarify-python/wiki/Troubleshooting) page.
-
+Please follow the [Wiki](https://github.com/johnkinuthiaa/avatarify-python/wiki/Troubleshooting) page.

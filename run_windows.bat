@@ -6,6 +6,8 @@ cd /d "%~dp0"
 call scripts/settings_windows.bat
 
 set CONFIG=fomm/config/vox-adv-256.yaml
+set KMP_DUPLICATE_LIB_OK=TRUE
+set OPENCV_VIDEOIO_PRIORITY_MSMF=0
 
 for /f "delims=" %%i in ('conda info --base') do set "CONDA_BASE=%%i"
 call "%CONDA_BASE%\condabin\conda.bat" activate %CONDA_ENV_NAME%
@@ -19,6 +21,12 @@ python -c "import cv2, yaml, zmq, msgpack_numpy, face_alignment" >nul 2>&1
 if errorlevel 1 (
   echo Installing missing Python packages for Windows...
   call pip install -r requirements_windows.txt || exit /B 1
+)
+
+python -c "import torch" >nul 2>&1
+if errorlevel 1 (
+  echo PyTorch GPU build failed to load. Installing CPU-only PyTorch for compatibility...
+  call conda install -y pytorch==1.7.1 torchvision cpuonly -c pytorch || exit /B 1
 )
 
 set PYTHONPATH=%PYTHONPATH%;%CD%;%CD%\fomm

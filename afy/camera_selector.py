@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import yaml
+import sys
 
 from afy.utils import log
 
@@ -8,12 +9,20 @@ from afy.utils import log
 g_selected_cam = None
 
 
+def _open_camera(camid):
+    if sys.platform.startswith('win'):
+        cap = cv2.VideoCapture(camid, cv2.CAP_DSHOW)
+        if cap.isOpened():
+            return cap
+    return cv2.VideoCapture(camid)
+
+
 def query_cameras(n_cams):
     cam_frames = {}
     cap = None
     for camid in range(n_cams):
         log(f"Trying camera with id {camid}")
-        cap = cv2.VideoCapture(camid)
+        cap = _open_camera(camid)
 
         if not cap.isOpened():
             log(f"Camera with id {camid} is not available")
@@ -108,4 +117,3 @@ if __name__ == '__main__':
         print(f"Selected camera {selected_cam}")
     else:
         log("No cameras are available")
-

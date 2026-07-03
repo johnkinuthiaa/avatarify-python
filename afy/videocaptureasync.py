@@ -3,16 +3,25 @@
 import threading
 import cv2
 import time
+import sys
 
 
 WARMUP_TIMEOUT = 10.0
+
+
+def _open_camera(src):
+    if sys.platform.startswith('win'):
+        cap = cv2.VideoCapture(src, cv2.CAP_DSHOW)
+        if cap.isOpened():
+            return cap
+    return cv2.VideoCapture(src)
 
 
 class VideoCaptureAsync:
     def __init__(self, src=0, width=640, height=480):
         self.src = src
 
-        self.cap = cv2.VideoCapture(self.src)
+        self.cap = _open_camera(self.src)
         if not self.cap.isOpened():
             raise RuntimeError("Cannot open camera")
 
