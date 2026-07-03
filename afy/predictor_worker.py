@@ -1,7 +1,7 @@
-from predictor_local import PredictorLocal
-from arguments import opt
-from networking import SerializingContext, check_connection
-from utils import Logger, TicToc, AccumDict, Once
+from afy.predictor_local import PredictorLocal
+from afy.arguments import opt
+from afy.networking import SerializingContext, check_connection
+from afy.utils import Logger, TicToc, AccumDict, Once
 
 import cv2
 import numpy as np
