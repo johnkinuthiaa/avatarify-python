@@ -32,7 +32,7 @@ if "%RECREATE_ENV%"=="1" (
 call "%CONDA_BASE%\condabin\conda.bat" activate %CONDA_ENV_NAME% || exit /B 1
 
 call conda install -y --force-reinstall numpy==1.19.0 scikit-image python-blosc==1.7.0 -c conda-forge || exit /B 1
-call conda install -y --force-reinstall pytorch==1.7.1 torchvision cudatoolkit=11.0 -c pytorch || exit /B 1
+call conda install -y --force-reinstall pytorch==1.7.1 torchvision==0.8.2 cudatoolkit=11.0 -c pytorch || exit /B 1
 call conda install -y --force-reinstall vs2015_runtime || exit /B 1
 call conda install -y -c anaconda git || exit /B 1
 call python -m pip install --upgrade pip setuptools wheel || exit /B 1
@@ -43,9 +43,12 @@ call git clone https://github.com/alievk/first-order-model.git fomm || exit /B 1
 
 call python -m pip install --upgrade --force-reinstall --no-cache-dir -r requirements_windows.txt || exit /B 1
 
+REM Pip may pull a different torch build via transitive deps; force canonical pair back.
+call conda install -y --force-reinstall pytorch==1.7.1 torchvision==0.8.2 cudatoolkit=11.0 -c pytorch >nul 2>&1
+
 call python -c "import torch" >nul 2>&1
 if errorlevel 1 (
   echo GPU-enabled PyTorch failed to load. Switching to CPU-only PyTorch...
   call conda remove -y pytorch torchvision cudatoolkit cpuonly >nul 2>&1
-  call conda install -y pytorch==1.7.1 torchvision cpuonly -c pytorch || exit /B 1
+  call conda install -y pytorch==1.7.1 torchvision==0.8.2 cpuonly -c pytorch || exit /B 1
 )

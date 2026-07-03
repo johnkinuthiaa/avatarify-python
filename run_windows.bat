@@ -17,17 +17,24 @@ if not exist "fomm\config\vox-adv-256.yaml" (
   exit /B 1
 )
 
-python -c "import cv2, yaml, zmq, msgpack_numpy, face_alignment" >nul 2>&1
+python -c "import cv2, yaml, zmq, msgpack_numpy, face_alignment, requests" >nul 2>&1
 if errorlevel 1 (
   echo Installing missing Python packages for Windows...
   call python -m pip install --upgrade --force-reinstall --no-cache-dir -r requirements_windows.txt || exit /B 1
+)
+
+python -c "import torch, torchvision, sys; sys.exit(0 if torch.__version__.startswith('1.7.1') and torchvision.__version__.startswith('0.8.2') else 1)" >nul 2>&1
+if errorlevel 1 (
+  echo Repairing Torch/Torchvision versions...
+  call conda remove -y pytorch torchvision cudatoolkit cpuonly >nul 2>&1
+  call conda install -y pytorch==1.7.1 torchvision==0.8.2 cudatoolkit=11.0 -c pytorch >nul 2>&1
 )
 
 python -c "import torch" >nul 2>&1
 if errorlevel 1 (
   echo PyTorch GPU build failed to load. Switching to CPU-only PyTorch...
   call conda remove -y pytorch torchvision cudatoolkit cpuonly >nul 2>&1
-  call conda install -y pytorch==1.7.1 torchvision cpuonly -c pytorch || exit /B 1
+  call conda install -y pytorch==1.7.1 torchvision==0.8.2 cpuonly -c pytorch || exit /B 1
 )
 
 set PYTHONPATH=%PYTHONPATH%;%CD%;%CD%\fomm

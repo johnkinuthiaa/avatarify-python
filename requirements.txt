@@ -5,4 +5,5 @@ pyzmq>=20,<26
 msgpack-numpy>=0.4.7,<0.5
 PyYAML>=5.4,<7
 requests>=2.28,<2.32
+urllib3<2
 pyfakewebcam==0.1.0; platform_system == "Linux"
